@@ -4,6 +4,7 @@ import os
 import random
 import time
 
+
 # Initalizes pygame
 pg.font.init()
 pg.init()
@@ -21,6 +22,7 @@ SHIP_LOCATION = 250, 750 # Ship width = 140px Ship height = 160px
 # -----------
 BG = pg.transform.scale(pg.image.load(os.path.join("Assets", "background_space.png")), (WIDTH, HEIGHT) )
 PLAYER_SHIP = pg.image.load(os.path.join("Assets", "Rocket_Ship.png"))
+RED_LASER = pg.image.load(os.path.join("Assets", "pixel_laser_red.png"))
 
 # ------
 # Screen
@@ -35,7 +37,6 @@ class Ship:
         self.x = x
         self.y = y
         self.ship_img = None
-        self.cool_down_counter = 0
     
     # Drawing ships (takes image and cordinates)
     def draw(self, window):
@@ -49,6 +50,22 @@ class Player(Ship):
         self.ship_img = PLAYER_SHIP
         self.mask = pg.mask.from_surface(self.ship_img)
 
+class Laser():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.laser_img = None
+        self.cool_down_counter = 0
+    
+    def draw_laser(self, window):
+        window.blit(self.laser_img, (self.x, self.y))
+
+class PlayerLaser(Laser):
+    def __init__(self, x, y):
+        super().__init__(x,y)
+        self.laser_img = RED_LASER
+        self.mask = pg.mask.from_surface(self.laser_img)
+
 def main():
     # ---------
     # Variables
@@ -58,13 +75,13 @@ def main():
     health = 10
     
     player = Player(SHIP_LOCATION[0], SHIP_LOCATION[1])
+    player_laser = PlayerLaser(500, 500)
     player_vel = 2
     
     clock = pg.time.Clock()
     
-
     # Updates the window
-    # We have redraw inside the main function so that we can access all the variables without using paramiters.
+    # We have redraw inside the main function so that we can access all the variables without using parameters.
     def redraw_window():
         screen.blit(BG, (0, 0)) # Clears the screen
         # text
@@ -72,8 +89,8 @@ def main():
         health_label = main_font.render(f"Health: {health}", 1, (255, 0, 0))
         
         player.draw(screen) # draws the player
-        
-         # Draws out the health_label (temporary??)
+        player_laser.draw_laser(screen)
+        # Draws out the health_label (temporary??)
         screen.blit(health_label, (10, 925))
         # Makes all of these updates actually happen 
         pg.display.update() 
@@ -101,9 +118,6 @@ def main():
             
     # Cleans up and uninitiliazes the pygame library and cleans up it's resources
     pg.quit()
-
-
-
 
 if __name__ == "__main__":
     main()
