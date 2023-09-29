@@ -29,7 +29,7 @@ screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Space Game")
 
 
-# Base Ship class
+# base Ship class
 class Ship:
     def __init__(self, x, y):
         self.x = x
